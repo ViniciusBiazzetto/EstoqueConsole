@@ -24,16 +24,19 @@ class Program
         StorageInitializer.EnsureDataFiles(dataFolder);
 
         // Carrega (estubs): aqui você implementaria leitura CSV
-          LoadProdutosFromCsv();
-        
+        LoadProdutosFromCsv();
+
 
         // LoadMovimentosFromCsv();
 
         // Menu principal
         while (true)
         {
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.Clear();
             Console.WriteLine("=== CONTROLE DE ESTOQUE ===");
+
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("1. Listar produtos");
             Console.WriteLine("2. Cadastrar produto");
             Console.WriteLine("3. Editar produto");
@@ -44,32 +47,44 @@ class Program
             Console.WriteLine("8. Relatório: Extrato de movimentos por produto");
             Console.WriteLine("9. Salvar (CSV)");
             Console.WriteLine("0. Sair");
+
+            Console.ForegroundColor = ConsoleColor.White;
             Console.Write("Escolha uma opção: ");
             var op = Console.ReadLine();
 
             switch (op)
             {
-                case "1": ListarProdutos(); Pause(); 
+                case "1":
+                    ListarProdutos(); Pause();
                     break;
-                case "2": CadastrarProduto(); Pause();
+                case "2":
+                    CadastrarProduto(); Pause();
                     break;
-                case "3": EditarProduto(); Pause(); 
+                case "3":
+                    EditarProduto(); Pause();
                     break;
-                case "4": ExcluirProduto(); Pause(); 
+                case "4":
+                    ExcluirProduto(); Pause();
                     break;
-                case "5": MovimentacaoEntrada(); Pause();
+                case "5":
+                    MovimentacaoEntrada(); Pause();
                     break;
-                case "6": MovimentacaoSaida(); Pause();
+                case "6":
+                    MovimentacaoSaida(); Pause();
                     break;
-                case "7": RelatorioAbaixoMinimo(); Pause();
+                case "7":
+                    RelatorioAbaixoMinimo(); Pause();
                     break;
-                case "8": ExtratoPorProduto(); Pause();
+                case "8":
+                    ExtratoPorProduto(); Pause();
                     break;
-                case "9": SalvarTudo(); Pause();
+                case "9":
+                    SalvarTudo(); Pause();
                     break;
                 case "0":
                     return;
-                default: Console.WriteLine("Opção inválida."); Pause();
+                default:
+                    Console.WriteLine("Opção inválida."); Pause();
                     break;
             }
         }
@@ -85,21 +100,27 @@ class Program
     // --- Funções (stubs/implementações simples) ---
     static void ListarProdutos()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("== Lista de Produtos ==");
         if (!produtos.Any())
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("(Nenhum produto cadastrado)");
             return;
         }
         foreach (var p in produtos)
         {
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"{p.Id} - {p.Nome} | Cat: {p.Categoria} | Saldo: {p.Saldo} | Mínimo: {p.EstoqueMinimo}");
         }
     }
 
     static void CadastrarProduto()
     {
+        Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine("== Cadastrar Produto ==");
+
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.Write("Nome: ");
         var nome = Console.ReadLine() ?? "";
         Console.Write("Categoria: ");
@@ -107,6 +128,7 @@ class Program
         Console.Write("Estoque mínimo (numero): ");
         if (!int.TryParse(Console.ReadLine(), out int minimo) || minimo < 0)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Estoque mínimo inválido.");
             return;
         }
@@ -118,14 +140,20 @@ class Program
 
     static void EditarProduto()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.Write("Id do produto a editar: ");
-        if (!int.TryParse(Console.ReadLine(), out int id)) 
-        { Console.WriteLine("Id inválido.");
-            return; }
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.WriteLine("Id inválido.");
+            return;
+        }
         var p = produtos.FirstOrDefault(x => x.Id == id);
-        if (p == null) 
-        { Console.WriteLine("Produto não encontrado.");
-            return; }
+        if (p == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Produto não encontrado.");
+            return;
+        }
 
         Console.Write($"Nome ({p.Nome}): ");
         var nome = Console.ReadLine();
@@ -133,17 +161,19 @@ class Program
 
         Console.Write($"Categoria ({p.Categoria}): ");
 
-        var cat = Console.ReadLine(); 
+        var cat = Console.ReadLine();
         if (string.IsNullOrWhiteSpace(cat)) cat = p.Categoria;
 
         Console.Write($"Estoque mínimo ({p.EstoqueMinimo}): ");
 
         var emStr = Console.ReadLine();
         int em = p.EstoqueMinimo;
-        if (!string.IsNullOrWhiteSpace(emStr) && (!int.TryParse(emStr, out em) || em < 0)) 
+        if (!string.IsNullOrWhiteSpace(emStr) && (!int.TryParse(emStr, out em) || em < 0))
 
-        { Console.WriteLine("Estoque mínimo inválido."); 
-            return; 
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Estoque mínimo inválido.");
+            return;
         }
 
         produtos.Remove(p);
@@ -153,52 +183,66 @@ class Program
 
     static void ExcluirProduto()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("Id do produto a excluir: ");
         if (!int.TryParse(Console.ReadLine(), out int id))
 
-        { Console.WriteLine("Id inválido.");
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Id inválido.");
 
             return;
         }
         var p = produtos.FirstOrDefault(x => x.Id == id);
-        if (p == null) 
-        { 
+        if (p == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Produto não encontrado.");
 
-            return; 
+            return;
         }
 
         if (p.Saldo < 0)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Não é permitido excluir produto com saldo negativo.");
 
             return;
         }
         produtos.Remove(p);
+
         Console.WriteLine("Produto excluído.");
     }
 
     static void MovimentacaoEntrada()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.Write("Id do produto (entrada): ");
-        if (!int.TryParse(Console.ReadLine(), out int id)) 
+        if (!int.TryParse(Console.ReadLine(), out int id))
 
-        { Console.WriteLine("Id inválido."); 
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Id inválido.");
 
-            return; 
+            return;
         }
         var p = produtos.FirstOrDefault(x => x.Id == id);
 
-        if (p == null) 
-        { Console.WriteLine("Produto não encontrado.");
+        if (p == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Produto não encontrado.");
 
-            return; 
+            return;
         }
 
         Console.Write("Quantidade: ");
-        if (!int.TryParse(Console.ReadLine(), out int qtd) || qtd <= 0) 
+        if (!int.TryParse(Console.ReadLine(), out int qtd) || qtd <= 0)
 
-        { Console.WriteLine("Quantidade inválida.");
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Quantidade inválida.");
 
             return;
         }
@@ -217,24 +261,34 @@ class Program
 
     static void MovimentacaoSaida()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("Id do produto (saída): ");
-        if (!int.TryParse(Console.ReadLine(), out int id)) 
-        { Console.WriteLine("Id inválido.");
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Id inválido.");
             return;
         }
         var p = produtos.FirstOrDefault(x => x.Id == id);
-        if (p == null) { Console.WriteLine("Produto não encontrado.");
+        if (p == null)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Produto não encontrado.");
             return;
         }
 
         Console.Write("Quantidade: ");
-        if (!int.TryParse(Console.ReadLine(), out int qtd) || qtd <= 0) 
-        { Console.WriteLine("Quantidade inválida.");
+        if (!int.TryParse(Console.ReadLine(), out int qtd) || qtd <= 0)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Quantidade inválida.");
             return;
         }
 
         if (p.Saldo < qtd)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Saldo insuficiente. Operação cancelada.");
 
             return;
@@ -253,44 +307,68 @@ class Program
 
     static void RelatorioAbaixoMinimo()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("== Produtos abaixo do mínimo ==");
         var abaixo = produtos.Where(p => p.Saldo < p.EstoqueMinimo).ToList();
-        if (!abaixo.Any()) { Console.WriteLine("(Nenhum produto abaixo do mínimo)"); return; }
+        if (!abaixo.Any())
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("(Nenhum produto abaixo do mínimo)");
+            return;
+        }
+
         foreach (var p in abaixo)
             Console.WriteLine($"{p.Id} - {p.Nome} | Saldo: {p.Saldo} | Mínimo: {p.EstoqueMinimo}");
     }
 
     static void ExtratoPorProduto()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
+
         Console.Write("Id do produto para extrato: ");
-        if (!int.TryParse(Console.ReadLine(), out int id)) 
-        { Console.WriteLine("Id inválido.");
-            return; }
-        var list = movimentos.Where(m => m.ProdutoId == id).OrderBy(m => m.Data).ToList();
-        if (!list.Any())
-        { Console.WriteLine("(Sem movimentos)");
+        if (!int.TryParse(Console.ReadLine(), out int id))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Id inválido.");
             return;
         }
+
+        var list = movimentos.Where(m => m.ProdutoId == id).OrderBy(m => m.Data).ToList();
+
+        if (!list.Any())
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("(Sem movimentos)");
+            return;
+        }
+
         foreach (var m in list)
             Console.WriteLine($"{m.Data:yyyy-MM-dd HH:mm} | {m.Tipo} | {m.Quantidade} | {m.Observacao}");
     }
 
     static void SalvarTudo()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         // Exemplo: salva apenas produtos agora (implemente movimentos da mesma forma)
         var produtosPath = Path.Combine(dataFolder, "produtos.csv");
+        var movimentoPath = Path.Combine(dataFolder, "movimentos.csv");
+
         try
         {
             CsvStorage.SaveProdutosAtomic(produtosPath, produtos);
-            Console.WriteLine("Produtos salvos com sucesso.");
+            CsvStorage.SaveMovimentoAtomic(movimentoPath, movimentos);
+            Console.WriteLine("Produtos e movimentos salvos com sucesso.");
         }
         catch (Exception ex)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Erro ao salvar: " + ex.Message);
         }
     }
     static void LoadProdutosFromCsv()
     {
+        Console.ForegroundColor = ConsoleColor.Green;
+
         var produtosPath = Path.Combine(dataFolder, "produtos.csv");
 
         if (!File.Exists(produtosPath))
@@ -328,6 +406,8 @@ public static class StorageInitializer
 {
     public static void EnsureDataFiles(string basePath)
     {
+        Console.ForegroundColor = ConsoleColor.Green;
+
         Directory.CreateDirectory(basePath);
 
         string produtosPath = Path.Combine(basePath, "produtos.csv");
@@ -346,6 +426,7 @@ public static class CsvStorage
 {
     public static void SaveProdutosAtomic(string path, IEnumerable<Produto> produtos)
     {
+        Console.ForegroundColor = ConsoleColor.Green;
         var dir = Path.GetDirectoryName(path) ?? ".";
         Directory.CreateDirectory(dir);
 
@@ -360,6 +441,31 @@ public static class CsvStorage
                 var nome = p.Nome?.Replace(";", ",") ?? "";
                 var cat = p.Categoria?.Replace(";", ",") ?? "";
                 sw.WriteLine($"{p.Id};{nome};{cat};{p.EstoqueMinimo};{p.Saldo}");
+            }
+        }
+
+        // Replace (atômico o máximo possível): apaga o original e move o temp
+        if (File.Exists(path)) File.Delete(path);
+        File.Move(temp, path);
+    }
+
+    public static void SaveMovimentoAtomic(string path, IEnumerable<Movimento> movimentos)
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        var dir = Path.GetDirectoryName(path) ?? ".";
+        Directory.CreateDirectory(dir);
+
+        string temp = Path.Combine(dir, Path.GetRandomFileName() + ".tmp");
+
+        using (var sw = new StreamWriter(temp, false, new UTF8Encoding(false)))
+        {
+            sw.WriteLine("id;produtoId;tipo;quantidade;data;observacao");
+            foreach (var p in movimentos.OrderBy(p => p.Id))
+            {
+                // Escape simples: substitui ; dentro de campos, se necessário                
+                var tipo = p.Tipo?.Replace(";", ",") ?? "";
+                var obs = p.Observacao?.Replace(";", ",") ?? "";
+                sw.WriteLine($"{p.Id};{p.ProdutoId};{tipo};{p.Quantidade};{p.Data};{obs}");
             }
         }
 
